@@ -1,0 +1,11 @@
+ls
+pwd
+echo "hello world"
+echo test
+export x1=123 x2=123 x4 x5
+echo $USER
+unset x2
+echo $x2
+echo asdasd
+pwd | grep a
+echo -nnnnnnnnnn asdasd
