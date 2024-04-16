@@ -1,4 +1,4 @@
-# Project Name
+# MiniShell_Tester
 
 > Please note: This project is currently under development and is not yet fully functional. It is not recommended to use it as a final minishell tester.
 
