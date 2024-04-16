@@ -2,7 +2,7 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 
 const tests = "./tests";
-const minishellDir = "../minishell/minishell";
+const minishellDir = process.argv.slice(2).join('') || "../minishell";
 const bashDir = "/bin/bash";
 
 class Test {
@@ -36,128 +36,7 @@ class Test {
         });
     }
 
-    outputFormat(array) {
-        const result = [];
-        let currentCommand = '';
-        let currentOutput = '';
-
-        for (const item of array) {
-            if (item.startsWith('11_C_M_D_11_')) {
-                // If it's a command, execute the previous command if any
-                if (currentCommand !== '') {
-                    result.push({ command: currentCommand, output: currentOutput });
-                    currentCommand = '';
-                    currentOutput = '';
-                }
-                currentCommand = item.replace('11_C_M_D_11_', '');
-            } else {
-                // If it's not a command, consider it as output
-                if (currentOutput !== '') {
-                    currentOutput += '\n' + item;
-                } else {
-                    currentOutput = item;
-                }
-            }
-        }
-
-        // Push the last command and output if any
-        if (currentCommand !== '') {
-            result.push({ command: currentCommand, output: currentOutput });
-        }
-
-        return result;
-    }
-
-    runMiniShell() {
-        return new Promise(async (resolve, reject) => {
-            const PROMPT = await this.getPrompt();
-            let minishellOutput = [];
-            let bashOutput = [];
-            let result = [];
-
-            const minishell = spawn(minishellDir);
-            const bash = spawn(bashDir);
-
-            minishell.stdout.on("data", (data) => {
-                minishellOutput.push(data.toString());
-            });
-
-            bash.stdout.on("data", (data) => {
-                bashOutput.push(data.toString());
-            });
-
-            minishell.stderr.on("close", () => {
-                let bashArr = bashOutput.join("").split('\n');
-                bashArr = this.outputFormat(bashArr);
-
-                let minishellArr = minishellOutput.join("").split(PROMPT);
-                minishellArr.pop();
-                if(bashArr[bashArr.length -1] === "")
-                    bashArr.pop();
-            
-                for (let i = 0; i < minishellArr.length; i++) {
-                    const miniLine = minishellArr[i].split("\n");
-
-                    const command = miniLine[0];
-                    let output = miniLine.slice(1).join("\n").trim();
-                    const bashOutput = bashArr[i - 1]?.output.trim();
-
-                    if(command)
-                        result.push({ command, output, expected: bashOutput });
-                }
-                resolve(result);
-            });
-
-            minishell.on("error", (error) => {
-                console.log(error);
-                // reject(error);
-            });
-            bash.on("error", (error) => {
-                console.log(error);
-                // reject(error);
-            });
-
-            for (const command of this.commands) {
-                bash.stdin.write(`echo "11_C_M_D_11_${command}"\n`);
-                bash.stdin.write(`${command}\n`);
-                minishell.stdin.write(`${command}\n`);
-            }
-
-            bash.stdin.end()
-
-            setTimeout(() => {
-                minishell.stdin.end();
-            }, 100);
-        });
-    }
-
-    async showResults(results) {
-
-        let success = 0;
-        console.log(`\n=================[ \x1b[33m${this.name}\x1b[0m ]=================\n`)
-
-        for(let i = 0; i < results.length; i++) {
-            const minishellOutput = results[i].output;
-            const bashOutput = results[i].expected;
-            const command = results[i].command;
-
-            if(minishellOutput === bashOutput) {
-                console.log(`\x1b[32m✓\x1b[0m ${command}`);
-                success++;
-            }else{
-                console.log("-----------------------------------");
-                console.log(`\x1b[31mTest: \x1b[0m${i + 1}`)
-                console.log(`\x1b[31mCommand:\x1b[0m ${command}`);
-                console.log(`\x1b[31mExpected:\x1b[0m ${bashOutput}`);
-                console.log(`\x1b[31mGot:\x1b[0m ${minishellOutput}`);
-                console.log("-----------------------------------");
-            }
-        }
-
-        console.log(`\n> ${success}/${results.length} tests passed\n`);
-    }
-
-    async runTestsV2(){
+    async runTests(){
         let success = 0;
         let tests = 0;
 
@@ -214,7 +93,9 @@ class Test {
             bash.stdin.write(`${command}\n`);
         }
         bash.stdin.end();
-        minishell.stdin.end();
+        setTimeout(() => {
+            minishell.stdin.end();
+        }, 10);
     }   
 }
 
@@ -227,7 +108,7 @@ async function runSets() {
                 const data = await fs.promises.readFile(`${tests}/${file}`, "utf8");
                 const commands = data.split("\n").filter((line) => line.trim() !== "");
                 const test = new Test(file, commands);
-                test.runTestsV2();
+                test.runTests();
             } catch (error) {
                 console.error(`Error reading file ${file}: ${error}`);
             }
