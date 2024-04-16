@@ -1,3 +1,7 @@
+echo "hello World"
 export x1="Paulo is nerd"
 echo $x1
-ls | ls | ls | grep a 
+ls
+pwd
+ls -a
+echo -nnnnnnnnnnnna asdf
