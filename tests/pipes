@@ -1,0 +1,4 @@
+cat ./data/lorem.txt | grep ipsum
+cat minishell.h | grep ");"
+export GHOST=123 | env | grep GHOST
+export XXXXXXXX | env | grep XXXXXXXX

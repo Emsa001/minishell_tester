@@ -1,0 +1,8 @@
+echo "hello World"
+export x1="Paulo is nerd"
+echo $x1
+pwd
+echo -nnnnnnnnnnnna asdf
+echo -nnnnnnn asdasdasd
+export x2="echo Hello World | wc -l"
+$x2

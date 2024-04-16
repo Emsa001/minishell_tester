@@ -1,7 +1,0 @@
-echo "hello World"
-export x1="Paulo is nerd"
-echo $x1
-ls
-pwd
-ls -a
-echo -nnnnnnnnnnnna asdf
