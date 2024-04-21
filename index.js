@@ -98,7 +98,14 @@ class Test {
         minishell.stdout.on("data", (data) => {
             minishellOutput.push(data.toString());
         });
+
+        let c = false;
+        let c1= false;
         bash.stdout.on("data", (data) => {
+            bashOutput.push(data.toString());
+        });
+
+        bash.stderr.on("data", (data) => {
             bashOutput.push(data.toString());
         });
 
