@@ -95,11 +95,8 @@ class Test {
             };
 
             const onStdErr = (data) => {
-                const strData = data.toString().split(" ");
-                strData.shift();
-                strData.shift();
-                strData.shift();
-                error += strData.join(" ");
+                const strData = data.toString().trim();
+                error += strData;
             };
     
             shell.stdout.on("data", onData);
