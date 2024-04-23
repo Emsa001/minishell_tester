@@ -6,7 +6,7 @@ const SHOW_OUTPUT = (process.argv[3] || 'false') == 'true';
 const tests = "./tests";
 const bashDir = "/bin/bash";
 
-const minishellDir = process.argv[2] || "../minishell/minishell";
+const minishellDir = process.argv[2] || "../minishell";
 const PROMPT = "> ";
 
 class Test {
@@ -148,9 +148,9 @@ class Test {
     }
 
     async showResults(outputMinishell, outputBash){
-        let testNumber = 0;
         log.yellow(`\n===[ Test ${this.name} started ]===\n`);
-
+        
+        let testNumber = 0;
         let stdOut = 0;
         let stdErr = 0;
         let exitCode = 0;
@@ -169,68 +169,56 @@ class Test {
             const bashExitcode = outputBash[testNumber].exitcode;
             const exitcodeSuccess = minishellExitcode == bashExitcode;
             
-            const nb = testNumber + 1;
-            log.info(`Test ${nb}: ${command}`)
+            if(stdoutSuccess && stderrSuccess && exitcodeSuccess)
+                log.success(testNumber,command);
+            else 
+                log.error(testNumber,command);
 
-            if(stdoutSuccess){
-                log.green(`  stdout: OK`);
+            if(stdoutSuccess)
                 stdOut++;
-            }
             else
-                log.red(`  stdout: FAIL`);
-            if(!stdoutSuccess || SHOW_OUTPUT){
-                log.errorMsg("    Minishell:",minishellStdout);
-                log.errorMsg("    Bash:",bashStdout);
-            }
+                log.red(`   stdout: FAIL`);
+            if(!stdoutSuccess || SHOW_OUTPUT)
+                log.output(stdoutSuccess,bashStdout,minishellStdout);
 
-            if(stderrSuccess){
-                log.green(`  stderr: OK`);
+            if(stderrSuccess)
                 stdErr++;
-            }
             else
-                log.red(`  stderr: FAIL`);
-            if(!stderrSuccess || SHOW_OUTPUT){
-                log.errorMsg("    Minishell:",minishellStderr);
-                log.errorMsg("    Bash:",bashStderr);
-            }
+                log.red(`   stderr: FAIL`);
+            if(!stderrSuccess || SHOW_OUTPUT)
+                log.output(stderrSuccess,bashStderr,minishellStderr);
 
-            if(exitcodeSuccess){
-                log.green(`  exitcode: OK`);
+            if(exitcodeSuccess)
                 exitCode++;
-            }
             else
-                log.red(`  exitcode: FAIL`);
-            if(!exitcodeSuccess || SHOW_OUTPUT){
-                log.errorMsg("    Minishell:",minishellExitcode);
-                log.errorMsg("    Bash:",bashExitcode);
-            }
+                log.red(`   exitcode: FAIL`);
+            if(!exitcodeSuccess || SHOW_OUTPUT)
+                log.output(exitcodeSuccess,bashExitcode,minishellExitcode);
             
-
             testNumber++;
             console.log("");
         }
 
-        log.info(`====================\n`);
-
-        log.gray(`stdout: ${stdOut}/${testNumber}`);
-        log.gray(`stderr: ${stdErr}/${testNumber}`);
-        log.gray(`exitcode: ${exitCode}/${testNumber}`);
-        log.gray(`Total: ${stdOut + stdErr + exitCode}/${testNumber * 3}\n\n`); 
+        log.sumup("stdout", stdOut/testNumber);
+        log.sumup("stderr", stdErr/testNumber);
+        log.sumup("exitcode", exitCode/testNumber);
+        log.sumup("Total", (stdOut + stdErr + exitCode)/(testNumber * 3)); 
+    
+        return [outputBash,outputMinishell];
     }
 
     async runTests() {
         const outputMinishell = await this.runMinishell();
         const outputBash = await this.runBash();
 
-        this.showResults(outputMinishell, outputBash);
+        return await this.showResults(outputMinishell, outputBash);
     }
 }
 
-async function runSets() {
+async function checker() {
     try {
         const files = await fs.promises.readdir(tests);
-        const testsPromises = files
-            .filter((file) => !file.startsWith("_"))
+         files.filter((file) => !file.startsWith("_"))
             .map(async (file) => {
                 try {
                     const data = await fs.promises.readFile(`${tests}/${file}`, "utf8");
@@ -247,4 +235,5 @@ async function runSets() {
     }
 }
 
-runSets();
+checker();
+// module.exports = {Test}
