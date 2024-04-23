@@ -1,8 +1,16 @@
-echo "hello World"
-export x1="Paulo is nerd"
-echo $x1
+echo Hello, World!
+echo "Hello, World!"
+echo "Hello," World!
+echo -n Hello, World! with no newline
 pwd
-echo -nnnnnnnnnnnna asdf
-echo -nnnnnnn asdasdasd
-export x2="echo Hello World | wc -l"
-$x2
+cd ..
+pwd
+cd -
+export x1="Hello, World!"
+echo $x1
+unset x1
+echo $x1
+export x2 x3= x4="" x5="Hello, World!"
+echo $x2 $x3 $x4 $x5
+unset x2 x3 x4 x5
+echo $x2 $x3 $x4 $x5

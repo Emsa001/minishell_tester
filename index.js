@@ -148,7 +148,7 @@ class Test {
     }
 
     async showResults(outputMinishell, outputBash){
-        log.yellow(`\n===[ Test ${this.name} started ]===\n`);
+        log.yellow(`\n===[ ${this.name} ]===\n`);
         
         let testNumber = 0;
         let stdOut = 0;
@@ -188,6 +188,7 @@ class Test {
             if(!stderrSuccess || SHOW_OUTPUT)
                 log.output(stderrSuccess,bashStderr,minishellStderr);
 
+                
             if(exitcodeSuccess)
                 exitCode++;
             else
@@ -196,14 +197,14 @@ class Test {
                 log.output(exitcodeSuccess,bashExitcode,minishellExitcode);
             
             testNumber++;
-            console.log("");
         }
 
+        console.log("");
         log.sumup("stdout", stdOut/testNumber);
         log.sumup("stderr", stdErr/testNumber);
         log.sumup("exitcode", exitCode/testNumber);
         log.sumup("Total", (stdOut + stdErr + exitCode)/(testNumber * 3)); 
-    
+        console.log("")
         return [outputBash,outputMinishell];
     }
 

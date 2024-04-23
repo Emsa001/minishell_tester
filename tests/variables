@@ -1,2 +1,0 @@
-export x1="echo $USER"
-$x1

@@ -9,8 +9,8 @@ const log = {
   gray: (text) => console.log("\x1b[90m" + text + reset),
   output: (success, bash, mini) => {
     if(success == false){
-      console.log(`\x1b[31m     Mini:\x1b[0m \x1b[90m${mini}\x1b[0m` + reset);
-      console.log(`\x1b[31m     Bash:\x1b[0m \x1b[90m${bash}\x1b[0m` + reset);
+      console.log(`\x1b[31m     Mini:\x1b[0m \x1b[90m|${mini}|\x1b[0m` + reset);
+      console.log(`\x1b[31m     Bash:\x1b[0m \x1b[90m|${bash}|\x1b[0m` + reset);
     }
     else{
       console.log(`\x1b[32m     Mini:\x1b[0m \x1b[90m${mini}\x1b[0m` + reset);
