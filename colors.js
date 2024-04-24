@@ -3,6 +3,7 @@ const reset = "\x1b[0m";
 const log = {
   green: (text) => console.log("\x1b[92m" + text + reset),
   red: (text) => console.log("\x1b[91m" + text + reset),
+  lightBlue: (text) => console.log("\x1b[94m" + text + reset),
   blue: (text) => console.log("\x1b[34m" + text + reset),
   info: (text) => console.log("\x1b[36m" + text + reset),
   yellow: (text) => console.log("\x1b[33m" + text + reset),

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "string-similarity-js": "^2.1.4"
+  }
+}

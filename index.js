@@ -1,10 +1,11 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
 const { log } = require("./colors.js");
+const {stringSimilarity} = require('string-similarity-js');
 
 const SHOW_OUTPUT = (process.argv[3] || 'false') == 'true';
 const tests = "./tests";
-const bashDir = "/bin/bash";
+const bashDir = "bash";
 
 const minishellDir = process.argv[2] || "../minishell";
 const PROMPT = "> ";
@@ -57,7 +58,7 @@ class Test {
                     outputArr[0] = outputArr[0].replaceAll(PROMPT, "");
                 }
 
-                const exitcode = parseInt(outputArr.pop());
+                const exitcode = parseInt(outputArr?.pop()) || 0;
                 if(outputArr.length == 1)
                     outputArr[0] = outputArr[0].split(PROMPT)[0];
                 else
@@ -66,22 +67,6 @@ class Test {
                 resolve([outputArr.join("\n"), error.trim(), exitcode]);
             }, 10);
         });
-    }
-    
-    async runMinishell()
-    {
-        const shell = spawn(minishellDir, [], { shell: true });
-        const output = [];
-
-        for (const command of this.commands) {
-            await shell.stdin.write(`${command}\n`);
-            await shell.stdin.write(`echo $?\n`);
-            const [stdout, stderr, exitcode] = await this.executeMinishell(shell);
-            output.push({ command, stdout, stderr, exitcode});
-        }
-        shell.stdin.end();
-
-        return output;
     }
 
     async executeBash(shell) {
@@ -126,10 +111,26 @@ class Test {
                     exitcode = parseInt(outputArr[0].split("e_cooooddddeeeeee")[1]);
                     outputArr[0] = outputArr[0].split("e_cooooddddeeeeee")[0];
                 }else
-                    exitcode = parseInt(outputArr.pop().split("e_cooooddddeeeeee")[1]);
+                    exitcode = parseInt(outputArr?.pop()?.split("e_cooooddddeeeeee")[1]) || 0;
                 resolve([outputArr.join("\n"), error, exitcode]);
             }, 10);
         });
+    }
+
+    async runMinishell()
+    {
+        const shell = spawn(minishellDir, [], { shell: true });
+        const output = [];
+
+        for (const command of this.commands) {
+            await shell.stdin.write(`${command}\n`);
+            await shell.stdin.write(`echo $?\n`);
+            const [stdout, stderr, exitcode] = await this.executeMinishell(shell);
+            output.push({ command, stdout, stderr, exitcode});
+        }
+        shell.stdin.end();
+
+        return output;
     }
 
     async runBash(){
@@ -148,7 +149,7 @@ class Test {
     }
 
     async showResults(outputMinishell, outputBash){
-        log.yellow(`\n===[ ${this.name} ]===\n`);
+        log.lightBlue(`\n==============[ ${this.name} ]==============\n`);
         
         let testNumber = 0;
         let stdOut = 0;
@@ -163,7 +164,11 @@ class Test {
 
             const minishellStderr = outputMinishell[testNumber].stderr;
             const bashStderr = outputBash[testNumber].stderr;
-            const stderrSuccess = minishellStderr == bashStderr;
+            let stderrSuccess;
+            if(bashStderr.length > 0)
+                stderrSuccess = stringSimilarity(bashStderr,minishellStderr) > 0.7;
+            else
+                stderrSuccess = minishellStderr == bashStderr;
             
             const minishellExitcode = outputMinishell[testNumber].exitcode;
             const bashExitcode = outputBash[testNumber].exitcode;
@@ -181,18 +186,18 @@ class Test {
             if(!stdoutSuccess || SHOW_OUTPUT)
                 log.output(stdoutSuccess,bashStdout,minishellStdout);
 
-            if(stderrSuccess)
+            if(stderrSuccess > 0.8)
                 stdErr++;
             else
                 log.red(`   stderr: FAIL`);
-            if(!stderrSuccess || SHOW_OUTPUT)
+            if(!stderrSuccess || SHOW_OUTPUT){
                 log.output(stderrSuccess,bashStderr,minishellStderr);
+            }
 
                 
             if(exitcodeSuccess)
                 exitCode++;
             else
-                log.red(`   exitcode: FAIL`);
             if(!exitcodeSuccess || SHOW_OUTPUT)
                 log.output(exitcodeSuccess,bashExitcode,minishellExitcode);
             

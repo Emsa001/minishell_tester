@@ -1,0 +1,4 @@
+echo Hello World
+export x1="echo Tralalala"
+cd ../minishell
+echo $SHLVL

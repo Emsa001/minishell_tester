@@ -1,16 +1,52 @@
-echo Hello, World!
-echo "Hello, World!"
-echo "Hello," World!
-echo -n Hello, World! with no newline
+echo hello world
+echo "hello world"
+echo 'hello world'
+echo hello'world'
+echo hello""world
+echo ''
+echo "$PWD"
+echo '$PWD'
+echo "aspas ->'"
+echo "aspas -> ' "
+echo 'aspas ->"'
+echo 'aspas -> " '
+echo "> >> < * ? [ ] | ; [ ] || && ( ) & # $ \ <<"
+echo '> >> < * ? [ ] | ; [ ] || && ( ) & # $ \ <<'
+echo "exit_code ->$? user ->$USER home -> $HOME"
+echo 'exit_code ->$? user ->$USER home -> $HOME'
+echo "$"
+echo '$'
+echo $
+echo $?
+echo $?HELLO
 pwd
-cd ..
-pwd
-cd -
-export x1="Hello, World!"
-echo $x1
-unset x1
-echo $x1
-export x2 x3= x4="" x5="Hello, World!"
-echo $x2 $x3 $x4 $x5
-unset x2 x3 x4 x5
-echo $x2 $x3 $x4 $x5
+pwd oi
+export hello
+export HELLO=123
+export A-
+export HELLO=123 A
+export HELLO="123 A-"
+export hello world
+export HELLO-=123
+export =
+export 123
+unset
+unset HELLO
+unset HELLO1 HELLO2
+unset HOME
+unset PATH
+unset SHELL
+cd $PWD
+cd $PWD hi 
+cd 123123
+echo $USER$USER$USER
+echo $'USER'
+echo $"USER"
+echo $? $? $USER$? $???$USER+$USER
+echo $A$U$S$E$R $USER_USER$US=ER $US?ER
+echo $US"ER"
+echo $_USER
+echo $US"ER"
+echo $USER"" 
+
+
