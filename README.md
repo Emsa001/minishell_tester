@@ -24,13 +24,9 @@ You're done!
 
 To run tests, run the following command
 ```bash
-node index.js <PATH_TO_MINISHELL> [SHOW_LOGS]
+node index.js [FILE] [DEBUG]
 ```
-Default values:
-```bash
-PATH_TO_MINISHELL: "../minishell"
-SHOW_OUTPUT: false
-```
+If [FILE] is not specified, all files will be tested 
 
 PS: Try to not get upset after running tests
 ## Add new tests

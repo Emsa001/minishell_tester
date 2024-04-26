@@ -3,11 +3,10 @@ const { spawn } = require("child_process");
 const { log } = require("./colors.js");
 const {stringSimilarity} = require('string-similarity-js');
 
-const SHOW_OUTPUT = (process.argv[3] || 'false') == 'true';
-const tests = "./tests";
-const bashDir = "bash";
+const DEBUG = (process.argv[3] || 'false') == 'true';
+const testsPath = "./tests";
 
-const minishellDir = process.argv[2] || "../minishell";
+const minishellPath = "../minishell";
 const PROMPT = "> ";
 
 class Test {
@@ -119,7 +118,7 @@ class Test {
 
     async runMinishell()
     {
-        const shell = spawn(minishellDir, [], { shell: true });
+        const shell = spawn(minishellPath, [], { shell: true });
         const output = [];
 
         for (const command of this.commands) {
@@ -134,7 +133,7 @@ class Test {
     }
 
     async runBash(){
-        const shell = spawn(bashDir, [], { shell: true });
+        const shell = spawn("bash", [], { shell: true });
         const output = [];
 
         for (const command of this.commands) {
@@ -183,14 +182,14 @@ class Test {
                 stdOut++;
             else
                 log.red(`   stdout: FAIL`);
-            if(!stdoutSuccess || SHOW_OUTPUT)
+            if(!stdoutSuccess || DEBUG)
                 log.output(stdoutSuccess,bashStdout,minishellStdout);
 
             if(stderrSuccess > 0.8)
                 stdErr++;
             else
                 log.red(`   stderr: FAIL`);
-            if(!stderrSuccess || SHOW_OUTPUT){
+            if(!stderrSuccess || DEBUG){
                 log.output(stderrSuccess,bashStderr,minishellStderr);
             }
 
@@ -198,7 +197,7 @@ class Test {
             if(exitcodeSuccess)
                 exitCode++;
             else
-            if(!exitcodeSuccess || SHOW_OUTPUT)
+            if(!exitcodeSuccess || DEBUG)
                 log.output(exitcodeSuccess,bashExitcode,minishellExitcode);
             
             testNumber++;
@@ -213,7 +212,7 @@ class Test {
         return [outputBash,outputMinishell];
     }
 
-    async runTests() {
+    async runtestsPath() {
         const outputMinishell = await this.runMinishell();
         const outputBash = await this.runBash();
 
@@ -221,25 +220,39 @@ class Test {
     }
 }
 
-async function checker() {
+async function checker(file) {
     try {
-        const files = await fs.promises.readdir(tests);
+        const checkTestDir = await fs.existsSync(testsPath);
+        const checkMinishell = await fs.existsSync(minishellPath);
+        if(!checkTestDir)
+            return console.error(`Error: ${testsPath} directory not found`);
+        if(!checkMinishell)
+            return console.error(`Error: ${minishellPath} not found`);
+
+        if(file){
+            const data = await fs.promises.readFile(`${testsPath}/${file}`, "utf8");
+            const commands = data.split("\n").filter((line) => line.trim() !== "");
+            commands.unshift(`export PS1="${PROMPT}"`)
+            const test = new Test(file, commands);
+            return test.runtestsPath();
+        }
+
+        const files = await fs.promises.readdir(testsPath);
          files.filter((file) => !file.startsWith("_"))
             .map(async (file) => {
                 try {
-                    const data = await fs.promises.readFile(`${tests}/${file}`, "utf8");
+                    const data = await fs.promises.readFile(`${testsPath}/${file}`, "utf8");
                     const commands = data.split("\n").filter((line) => line.trim() !== "");
                     commands.unshift(`export PS1="${PROMPT}"`)
                     const test = new Test(file, commands);
-                    return test.runTests();
+                    return test.runtestsPath();
                 } catch (error) {
                     console.error(`Error reading file ${file}: ${error}`);
                 }
             });
     } catch (error) {
-        console.error("Error reading tests directory:", error);
+        console.error(error);
     }
 }
 
-checker();
-// module.exports = {Test}
+checker(process.argv[2]);
