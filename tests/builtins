@@ -39,14 +39,3 @@ unset SHELL
 cd $PWD
 cd $PWD hi 
 cd 123123
-echo $USER$USER$USER
-echo $'USER'
-echo $"USER"
-echo $? $? $USER$? $???$USER+$USER
-echo $A$U$S$E$R $USER_USER$US=ER $US?ER
-echo $US"ER"
-echo $_USER
-echo $US"ER"
-echo $USER"" 
-
-
