@@ -5,7 +5,7 @@ const { stringSimilarity } = require('string-similarity-js');
 const DEBUG = false;
 const testsPath = "./tests";
 
-const minishellPath = "../minishell/minishell";
+const minishellPath = "../minishell";
 const PROMPT = "> ";
 
 const reset = "\x1b[0m";
