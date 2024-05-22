@@ -2,10 +2,10 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 const { stringSimilarity } = require('string-similarity-js');
 
-const DEBUG = (process.argv[3] || 'false') == 'true';
+const DEBUG = false;
 const testsPath = "./tests";
 
-const minishellPath = "../minishell";
+const minishellPath = "../minishell/minishell";
 const PROMPT = "> ";
 
 const reset = "\x1b[0m";
