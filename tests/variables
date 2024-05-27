@@ -1,0 +1,10 @@
+echo $USER$USER$USER
+echo $'USER'
+echo $"USER"
+echo $? $? $USER$? $???$USER+$USER
+echo $A$U$S$E$R $USER_USER$US=ER $US?ER
+echo asd '$USER' asd"$USER" '$USER' aaa'$USER'
+echo $US"ER"
+echo $_USER
+echo $US"ER"
+echo $USER""

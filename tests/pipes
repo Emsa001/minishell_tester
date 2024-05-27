@@ -1,0 +1,4 @@
+ls | ls | ls
+ls | wc -l
+cat 123 | wc -l
+echo 123 | wc -l

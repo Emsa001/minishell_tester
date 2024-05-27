@@ -1,0 +1,11 @@
+grep hi <./data/empty.txt
+grep Lorem <./data/lorem.txt
+ls > ./data/output.txt
+cat ./data/output.txt
+cat ./data/error.txt
+cat ./data/output_and_error.txt
+date >> ./data/output.log
+cat output.log
+wc -l < ./data/long.txt
+sort < ./data/lorem.txt > ./data/sorted_lorem.txt
+find ./data -name "*.txt" > /dev/null
